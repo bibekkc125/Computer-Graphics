@@ -1,0 +1,178 @@
+//Liang Barsky Line Clipping Algorithm
+
+#define GLEW_STATIC
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+const unsigned int width = 800;
+const unsigned int height = 800;
+const int umin = 0;
+const int umax = 1;
+
+//Escape key is used to exit window
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+//window changes accordingly when resized
+void window_resize(GLFWwindow *window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
+
+void LCA(int x1, int y1, int x2, int y2, int xmin, int ymin, int xmax, int ymax) {
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+	int x, y;
+	float p[4], q[4], U[4], S[4];
+	float a, b, c, d, e, f, g, h;
+
+	p[0] = -dx;
+	p[1] = dx;
+	p[2] = -dy;
+	p[3] = dy;
+
+	q[0] = x1 - xmin;
+	q[1] = xmax - x1;
+	q[2] = y1 - ymin;
+	q[3] = ymax - y1;
+
+	glColor3d(0, 0, 0);
+	glBegin(GL_LINES);
+	for (int i = 0; i<4; i++)
+	{
+		if (p[i] == 0)
+		{
+			printf("Line is parallel to one of the clipping boundary");
+			if (q[i] >= 0)
+			{
+				if (i<2)
+				{
+					if (y1<ymin)
+					{
+						y1 = ymin;
+					}
+
+					if (y2>ymax)
+					{
+						y2 = ymax;
+					}
+					cout << x1 << ' ' << y1 << '\n';
+					
+					//glVertex2f((float)x1/100, (float)y1/100);
+					//glVertex2f((float)x2 / 100, (float)y2 / 100);
+				}
+
+				if (i>1)
+				{
+					if (x1<xmin)
+					{
+						x1 = xmin;
+					}
+
+					if (x2>xmax)
+					{
+						x2 = xmax;
+					}
+					cout << x2 << ' ' << y2 << '\n';
+					//glVertex2f((float)x1 / 100, (float)y1 / 100);
+					//glVertex2f((float)x2 / 100, (float)y2 / 100);
+				}
+			}
+		}
+	}
+
+	float t1 = 0;
+	float t2 = 1;
+
+	for (int i = 0; i<4; i++)
+	{
+		float temp = q[i] / p[i];
+
+		if (p[i]<0)
+		{
+			if (t1 <= temp)
+				t1 = temp;
+		}
+		else
+		{
+			if (t2>temp)
+				t2 = temp;
+		}
+	}
+
+	if (t1<t2)
+	{
+		float xx1 = x1 + t1 * p[1];
+		float xx2 = x1 + t2 * p[1];
+		float yy1 = y1 + t1 * p[3];
+		float yy2 = y1 + t2 * p[3];
+		cout << xx1 << ' ' << yy1 << '\n';
+		cout << xx2 << ' ' << yy2 << '\n';
+		glVertex2f((float)xx1 / 100, (float)yy1 / 100);
+		glVertex2f((float)xx2 / 100, (float)yy2 / 100);
+	}
+	glEnd();
+}
+
+int main() {
+
+	int x1, y1, x2, y2,xmin,ymin,xmax,ymax;
+	//Initialize window
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(width, height, "New Window", NULL, NULL);
+
+	if (!window) {
+		std::cout << "Failed to initialize window";
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, window_resize);
+	glewInit();
+
+	cout << "Enter coordinates of A : ";
+	cin >> x1 >> y1;
+
+	cout << "Enter coordinates of B : ";
+	cin >> x2 >> y2;
+
+	cout << "Enter xmin and ymin : ";
+	cin >> xmin >> ymin;
+
+	cout << "Enter xmax and ymax : ";
+	cin >> xmax >> ymax;
+	
+	
+	//main loop
+	while (!glfwWindowShouldClose(window)) {
+		processInput(window);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glBegin(GL_LINES);
+		//Vertical min line
+		glVertex2f((float)xmin / 100, (float)ymin / 100);
+		glVertex2f((float)xmin / 100, (float)ymax / 100);
+		//Horizantal min line
+		glVertex2f((float)xmin / 100, (float)ymin / 100);
+		glVertex2f((float)xmax / 100, (float)ymin / 100);
+		//Horizantal max line
+		glVertex2f((float)xmin / 100, (float)ymax / 100);
+		glVertex2f((float)xmax / 100, (float)ymax / 100);
+		//Vertical min line
+		glVertex2f((float)xmax / 100, (float)ymin / 100);
+		glVertex2f((float)xmax / 100, (float)ymax / 100);
+		glEnd();
+
+		
+		LCA(x1, y1, x2, y2, xmin, ymin, xmax, ymax);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
+}

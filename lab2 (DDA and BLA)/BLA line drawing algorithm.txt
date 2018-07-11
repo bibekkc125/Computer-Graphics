@@ -1,0 +1,68 @@
+//for |m|<1
+
+#define GLEW_STATIC
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+
+void DrawLine(int x0, int y0, int x1, int y1) {
+	int p[1000];
+	glBegin(GL_LINE_LOOP);
+	glColor3f(0.0f,0.0f,0.0f);
+	glVertex2f((float)x0 / 100,(float)y0 / 100);
+
+	int dy = y1 - y0;
+	int dx = x1 - x0;
+
+	p[0] = 2 * dy - dx;
+	int x = x0;
+	int y = y0;
+	for (int i = 0; i <= 10000; i++) {
+		if (p[i] < 0) {
+			x = x + 1;
+			glVertex2f((float)x / 100, (float)y / 100);
+			p[i + 1] = p[i] + 2 * dy;
+		}
+		else {
+			x = x + 1;
+			y = y + 1;
+			glVertex2f((float)x / 100, (float)y / 100);
+			p[i + 1] = p[i] + 2 * dy - 2 * dx;
+		}
+		if (x == x1) {
+			break;
+		}
+	}
+	glEnd();
+}
+
+int main() {
+
+	//Initialize window
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(1366, 768, "New Window", NULL, NULL);
+
+	if (!window) {
+		std::cout << "Failed to initialize window";
+	}
+	glfwMakeContextCurrent(window);
+	glewInit();
+	
+	//main loop
+	while (!glfwWindowShouldClose(window)) {
+
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		DrawLine(10, 20, 50, 80);
+	
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
+}

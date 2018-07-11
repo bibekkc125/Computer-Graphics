@@ -1,0 +1,98 @@
+//Midpoint Circle Drawing Algorithm
+
+#define GLEW_STATIC
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+const unsigned int width = 800;
+const unsigned int height = 800;
+
+//Escape key is used to exit window
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+//window changes accordingly when resized
+void window_resize(GLFWwindow *window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
+
+void DrawCircle(int xc, int yc, int r) {
+	int x = 0, y = r;
+	cout << "(" << y + xc << ", " << x + yc << ") ";
+	glBegin(GL_TRIANGLE_STRIP);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glVertex2f((float)(x + xc) / 100, (float)(y + yc) / 100);
+
+	//Initializing value of P
+	int P = 1 - r;
+	while (y > x)
+	{
+		x++;
+		if (P <= 0)
+			P = P + 2 * x + 1;
+		else
+		{
+			y--;
+			P = P + 2 * x - 2 * y + 1;
+		}
+
+		//List out all coordinates in all octants
+		cout << "(" << y + xc << ", " << x + yc << ") ";
+		cout << "(" << -y + xc << ", " << x + yc << ") ";
+		cout << "(" << y + xc << ", " << -x + yc << ") ";
+		cout << "(" << -y + xc << ", " << -x + yc << ") ";
+		cout << "(" << x + xc << ", " << y + yc << ") ";
+		cout << "(" << -x + xc << ", " << y + yc << ") ";
+		cout << "(" << x + xc << ", " << -y + yc << ") ";
+		cout << "(" << -x + xc << ", " << -y + yc << ") ";
+
+		//Rendering the coordinates in all octants
+		glVertex2f((float)(y + xc) / 100, (float)(x + yc) / 100);
+		glVertex2f((float)(-y + xc) / 100, (float)(x + yc) / 100);
+		glVertex2f((float)(y + xc) / 100, (float)(-x + yc) / 100);
+		glVertex2f((float)(-y + xc) / 100, (float)(-x + yc) / 100);
+		glVertex2f((float)(x + xc) / 100, (float)(y + yc) / 100);
+		glVertex2f((float)(-x + xc) / 100, (float)(y + yc) / 100);
+		glVertex2f((float)(x + xc) / 100, (float)(-y + yc) / 100);
+		glVertex2f((float)(-x + xc) / 100, (float)(-y + yc) / 100);
+
+	}
+	glEnd();
+}
+
+
+int main() {
+
+	//Initialize window
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(width, height, "New Window", NULL, NULL);
+
+	if (!window) {
+		std::cout << "Failed to initialize window";
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, window_resize);
+	glewInit();
+
+	//main loop
+	while (!glfwWindowShouldClose(window)) {
+		processInput(window);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//Circle drawing function
+		DrawCircle(0, 0, 50);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
+}

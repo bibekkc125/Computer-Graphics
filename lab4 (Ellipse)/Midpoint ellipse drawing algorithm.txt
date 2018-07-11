@@ -1,0 +1,118 @@
+//Midpoint Ellipse Drawing Algorithm
+
+#define GLEW_STATIC
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+
+const unsigned int width = 800;
+const unsigned int height = 600;
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+void window_resize(GLFWwindow *window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
+
+void DrawEllipse(int xc, int yc, int rx, int ry) {
+	int x = 0, y = ry;
+	//cout << "(" << y + xc << ", " << x + yc << ") ";
+	glColor3f(0.0f, 0.0f, 0.0f);
+
+	glBegin(GL_TRIANGLE_FAN);
+	cout << "(" << x + xc << ", " << y + yc << ") \n";
+	glVertex2f((float)(x + xc) / 100, (float)(y + yc) / 100);
+	
+	//Initializing value of P1
+	float P1 = pow(ry, 2) - pow(rx, 2)*ry + 0.25* pow(rx, 2);
+	while ((2 * pow(ry,2)*x) < (2 * pow(rx,2)*y))
+	{
+		x++;
+		if (P1 < 0) {
+			P1 = P1 + 2 * pow(ry,2) * x + pow(ry,2);
+		}
+		else
+		{
+			y--;
+			P1 = P1 + 2 * pow(ry,2) * x - 2 * pow(rx,2) * y + pow(ry,2);
+		}
+		//Listing out all points in region 1
+		cout << "(" << x + xc << ", " << y + yc << ") \n";
+		cout << "(" << -x + xc << ", " << y + yc << ") ";
+		cout << "(" << x + xc << ", " << -y + yc << ") ";
+		cout << "(" << -x + xc << ", " << -y + yc << ")\n";
+		//Rendering all points in region 1
+		glVertex2f((float)(x + xc) / 100, (float)(y + yc) / 100);
+		glVertex2f((float)(-x + xc) / 100, (float)(y + yc) / 100);
+		glVertex2f((float)(x + xc) / 100, (float)(-y + yc) / 100);
+		glVertex2f((float)(-x + xc) / 100, (float)(-y + yc) / 100);
+	}
+
+	//Initializing the value of P2
+	float P2 = pow(ry, 2)*pow((x + 0.5), 2) + pow(rx, 2)*pow((y - 1), 2) - pow(rx, 2)*pow(ry, 2);
+	while (2 * pow(ry,2)*x >= 2 * pow(rx,2)*y)
+	{
+		y--;
+		if (P2 > 0) {
+			P2 = P2 - 2 * pow(rx, 2) * y + pow(rx, 2);
+		}
+		else
+		{
+			x++;
+			P2 = P2 + 2 * pow(ry,2) * x - 2 * pow(rx, 2) * y + pow(rx, 2);
+		}
+
+		//Listing out all points in region 2
+		cout << "(" << x + xc << ", " << y + yc << ") \n";
+		cout << "(" << -x + xc << ", " << y + yc << ") ";
+		cout << "(" << x + xc << ", " << -y + yc << ") ";
+		cout << "(" << -x + xc << ", " << -y + yc << ")\n";
+		//Rendering all points in region 2
+		glVertex2f((float)(x + xc) / 100, (float)(y + yc) / 100);
+		glVertex2f((float)(-x + xc) / 100, (float)(y + yc) / 100);
+		glVertex2f((float)(x + xc) / 100, (float)(-y + yc) / 100);
+		glVertex2f((float)(-x + xc) / 100, (float)(-y + yc) / 100);
+
+		//Define stopping condition
+		if (y == 0)
+			break;
+	}
+	glEnd();
+}
+
+
+int main() {
+
+	//Initialize window
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(width, height, "New Window", NULL, NULL);
+
+	if (!window) {
+		std::cout << "Failed to initialize window";
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, window_resize);
+	glewInit();
+	
+	//main loop
+	while (!glfwWindowShouldClose(window)) {
+		processInput(window);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+		
+		//Ellipse drawing function
+		DrawEllipse(0, 0, 50, 80);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
+}

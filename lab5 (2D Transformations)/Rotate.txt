@@ -1,0 +1,114 @@
+//Rotation
+
+#define GLEW_STATIC
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+const unsigned int width = 800;
+const unsigned int height = 800;
+
+//Escape key is used to exit window
+void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+//window changes accordingly when resized
+void window_resize(GLFWwindow *window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
+
+//Matrix multiplication
+void matrixMultiply(int x1,int y1, int x2, int y2,float O)
+{
+	int i, j, k;
+	float D[3][1],E[3][1];
+
+	float A[3][3] = {cos(O), -sin(0), 0, sin(O), cos(O), 0, 0, 0, 1};
+	float B[3][1] = { x1, y1, 1 };
+	float C[3][1] = { x2, y2, 1 };
+
+		for (i = 0; i < 3; i++)
+		{
+			for (j = 0; j < 1; j++)
+			{
+				D[i][j] = 0;
+				E[i][j] = 0;
+				for (k = 0; k < 3; k++)
+				{
+					D[i][j] += A[i][k] * B[k][j];
+					E[i][j] += A[i][k] * C[k][j];
+				}
+			}
+		}
+		cout << D[0][0] << ' ' << D[1][0]<<"\n";
+		cout << E[0][0] << ' ' << E[1][0];
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex2f((float)D[0][0] / 100, (float)D[1][0] / 100);
+	glVertex2f((float)E[0][0] / 100, (float)E[1][0] / 100);
+	glEnd();
+}
+
+//Rotate function
+void rotate(int a,int b,int c, int d) {
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex2f((float)a/100,(float)b/100);
+	glVertex2f((float)c/100, (float)d/100);
+	glEnd();
+	
+}
+
+int main() {
+	int tx, ty, x1, y1,x2,y2;
+	float O;
+	//Initialize window
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(width, height, "New Window", NULL, NULL);
+
+	if (!window) {
+		std::cout << "Failed to initialize window";
+	}
+	glfwMakeContextCurrent(window);
+	glfwSetFramebufferSizeCallback(window, window_resize);
+	glewInit();
+
+	cout << "Enter angle in degrees: ";
+	cin >> O;
+
+	cout << "Enter point 1 : ";
+	cin >> x1 >> y1;
+
+	cout << "Enter point 2 : ";
+	cin >> x2 >> y2;
+	//O = (3.14 / 180) * O;
+
+	//main loop
+	while (!glfwWindowShouldClose(window)) {
+		processInput(window);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		//Drawing Axes
+		glBegin(GL_LINES);
+		glVertex2f(1, 0);
+		glVertex2f(-1, 0);
+		glVertex2f(0, 1);
+		glVertex2f(0, -1);
+		glEnd();
+
+		rotate(x1, y1, x2, y2);
+		matrixMultiply(x1, y1, x2, y2, O);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
+}

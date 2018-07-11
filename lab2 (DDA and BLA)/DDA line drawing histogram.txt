@@ -1,0 +1,89 @@
+#define GLEW_STATIC
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <cmath>
+
+
+void DrawLine(int x0, int y0, int x1, int y1) {
+	int step;
+	float xinc, yinc;
+
+	glBegin(GL_LINE_LOOP);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glVertex2f((float)x0 / 100, (float)y0 / 100);
+
+	int dx = x1 - x0;
+	int dy = y1 - y0;
+
+	if (abs(dx) > abs(dy))
+		step = abs(dx);
+	else
+		step = abs(dy);
+
+	xinc = dx / (float)step;
+	yinc = dy / (float)step;
+
+	float x = x0, y = y0;
+	for (int i = 0; i < step; i++) {
+		x = x + xinc;
+		y = y + yinc;
+		glVertex2f(x / 100, y / 100);
+	}
+	glEnd();
+}
+
+int main() {
+
+	//Initialize window
+	glfwInit();
+	GLFWwindow *window = glfwCreateWindow(1366, 768, "New Window", NULL, NULL);
+
+	if (!window) {
+		std::cout << "Failed to initialize window";
+	}
+	glfwMakeContextCurrent(window);
+	glewInit();
+
+	//main loop
+	while (!glfwWindowShouldClose(window)) {
+
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glBegin(GL_LINES);
+
+		//drawing axes
+		glColor3f(0.0f, 0.0f, 0.0f);
+		glVertex2f(-0.9f, 1.0f);  glVertex2f(-0.9f, -1.0f);
+		glVertex2f(-1.0f, -0.9f);  glVertex2f(1.0f, -0.9f);
+		glEnd();
+
+		//line chart
+		DrawLine(-80,-90,-80,0);
+		DrawLine(-70, -90, -70, 0);
+		DrawLine(-80, 0, -70, 0);
+
+		DrawLine(-70, -90, -70, 20);
+		DrawLine(-60, -90, -60, 20);
+		DrawLine(-70,20,-60,20);
+
+		DrawLine(-60, -90, -60, 30);
+		DrawLine(-50, -90, -50, 30);
+		DrawLine(-60, 30, -50, 30);
+
+		DrawLine(-50, -90, -50, -5);
+		DrawLine(-40, -90, -40, -5);
+		DrawLine(-50, -5, -40, -5);
+
+		DrawLine(-40, -90, -40, -20);
+		DrawLine(-30, -90, -30, -20);
+		DrawLine(-40, -20, -30, -20);
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwTerminate();
+	return 0;
+}
