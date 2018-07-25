@@ -23,7 +23,7 @@ void window_resize(GLFWwindow *window, int width, int height) {
 }
 
 //Matrix multiplication
-void matrixMultiply(int x1,int y1, int x2, int y2,int shx)
+void matrixMultiply(int x1,int y1, int x2, int y2,float shx)
 {
 	int i, j, k;
 	float D[3][1],E[3][1];
@@ -66,7 +66,7 @@ void shear(int a,int b,int c, int d) {
 
 int main() {
 	int tx, ty, x1, y1,x2,y2;
-	int shx;
+	float shx;
 	//Initialize window
 	glfwInit();
 	GLFWwindow *window = glfwCreateWindow(width, height, "New Window", NULL, NULL);
