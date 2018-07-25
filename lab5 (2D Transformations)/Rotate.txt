@@ -80,13 +80,13 @@ int main() {
 
 	cout << "Enter angle in degrees: ";
 	cin >> O;
-
+	O = (3.14 / 180) * O;
 	cout << "Enter point 1 : ";
 	cin >> x1 >> y1;
 
 	cout << "Enter point 2 : ";
 	cin >> x2 >> y2;
-	//O = (3.14 / 180) * O;
+	
 
 	//main loop
 	while (!glfwWindowShouldClose(window)) {
