@@ -23,30 +23,30 @@ void window_resize(GLFWwindow *window, int width, int height) {
 }
 
 //Matrix multiplication
-void matrixMultiply(int x1,int y1, int x2, int y2,int sx,int sy)
+void matrixMultiply(int x1, int y1, int x2, int y2, float sx, float sy)
 {
 	int i, j, k;
-	float D[3][1],E[3][1];
+	float D[3][1], E[3][1];
 
-	float A[3][3] = {sx, 0, 0, 0, sy, 0, 0, 0, 1};
+	float A[3][3] = { sx, 0, 0, 0, sy, 0, 0, 0, 1 };
 	float B[3][1] = { x1, y1, 1 };
 	float C[3][1] = { x2, y2, 1 };
 
-		for (i = 0; i < 3; i++)
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 1; j++)
 		{
-			for (j = 0; j < 1; j++)
+			D[i][j] = 0;
+			E[i][j] = 0;
+			for (k = 0; k < 3; k++)
 			{
-				D[i][j] = 0;
-				E[i][j] = 0;
-				for (k = 0; k < 3; k++)
-				{
-					D[i][j] += A[i][k] * B[k][j];
-					E[i][j] += A[i][k] * C[k][j];
-				}
+				D[i][j] += A[i][k] * B[k][j];
+				E[i][j] += A[i][k] * C[k][j];
 			}
 		}
-		cout << D[0][0] << ' ' << D[1][0]<<"\n";
-		cout << E[0][0] << ' ' << E[1][0];
+	}
+	cout << D[0][0] << ' ' << D[1][0] << "\n";
+	cout << E[0][0] << ' ' << E[1][0];
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_LINES);
 	glVertex2f((float)D[0][0] / 100, (float)D[1][0] / 100);
@@ -55,18 +55,18 @@ void matrixMultiply(int x1,int y1, int x2, int y2,int sx,int sy)
 }
 
 //Scale function
-void scale(int a,int b,int c, int d) {
+void scale(int a, int b, int c, int d) {
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glBegin(GL_LINES);
-	glVertex2f((float)a/100,(float)b/100);
-	glVertex2f((float)c/100, (float)d/100);
+	glVertex2f((float)a / 100, (float)b / 100);
+	glVertex2f((float)c / 100, (float)d / 100);
 	glEnd();
-	
+
 }
 
 int main() {
-	int tx, ty, x1, y1,x2,y2;
-	int sx,sy;
+	int tx, ty, x1, y1, x2, y2;
+	float sx, sy;
 	//Initialize window
 	glfwInit();
 	GLFWwindow *window = glfwCreateWindow(width, height, "New Window", NULL, NULL);
