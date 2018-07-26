@@ -1,5 +1,5 @@
 # Computer Graphics lab
-----
+
 ## Overview:
 
 1. Introductory (Nepal Flag)  
