@@ -9,6 +9,7 @@
 5. 2D Transformation- Translation,Rotation, Scaling, Reflection, Shearing(By matrix multiplication)
 6. 2D viewing- Cohen-Sutherland, LCA
 7. 3D Transformation- Translation, Rotation, Reflection
+8. Windmill
 ----
 ## Platform:
 
